@@ -172,7 +172,7 @@ class Predictor(BasePredictor):
 
         print("Loading sdxl txt2img pipeline...")
         self.txt2img_pipe = DiffusionPipeline.from_pretrained(
-            SDXL_MODEL_CACHE,
+            'stabilityai/stable-diffusion-xl-base-1.0',
             torch_dtype=torch.float16,
             use_safetensors=True,
             variant="fp16",

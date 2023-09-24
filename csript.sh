@@ -6,3 +6,6 @@ sudo chmod +x /usr/local/bin/cog
 sudo usermod -aG docker $USER
 newgrp docker
 sudo systemctl restart docker
+
+#clone this repo!
+git clone https://github.com/Vkzem/cog-sdxl-test.git

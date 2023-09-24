@@ -35,8 +35,7 @@ SDXL_MODEL_CACHE = "./sdxl-cache"
 REFINER_MODEL_CACHE = "./refiner-cache"
 SAFETY_CACHE = "./safety-cache"
 FEATURE_EXTRACTOR = "./feature-extractor"
-# SDXL_URL = "https://weights.replicate.delivery/default/sdxl/sdxl-vae-fix-1.0.tar"
-SDXL_URL = "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors"
+SDXL_URL = "https://weights.replicate.delivery/default/sdxl/sdxl-vae-fix-1.0.tar"
 REFINER_URL = (
     "https://weights.replicate.delivery/default/sdxl/refiner-no-vae-no-encoder-1.0.tar"
 )
@@ -172,7 +171,7 @@ class Predictor(BasePredictor):
 
         print("Loading sdxl txt2img pipeline...")
         self.txt2img_pipe = DiffusionPipeline.from_pretrained(
-            'stabilityai/stable-diffusion-xl-base-1.0',
+            SDXL_MODEL_CACHE,
             torch_dtype=torch.float16,
             use_safetensors=True,
             variant="fp16",
@@ -183,29 +182,29 @@ class Predictor(BasePredictor):
 
         self.txt2img_pipe.to("cuda")
 
-        print("Loading SDXL img2img pipeline...")
-        self.img2img_pipe = StableDiffusionXLImg2ImgPipeline(
-            vae=self.txt2img_pipe.vae,
-            text_encoder=self.txt2img_pipe.text_encoder,
-            text_encoder_2=self.txt2img_pipe.text_encoder_2,
-            tokenizer=self.txt2img_pipe.tokenizer,
-            tokenizer_2=self.txt2img_pipe.tokenizer_2,
-            unet=self.txt2img_pipe.unet,
-            scheduler=self.txt2img_pipe.scheduler,
-        )
-        self.img2img_pipe.to("cuda")
+        # print("Loading SDXL img2img pipeline...")
+        # self.img2img_pipe = StableDiffusionXLImg2ImgPipeline(
+        #     vae=self.txt2img_pipe.vae,
+        #     text_encoder=self.txt2img_pipe.text_encoder,
+        #     text_encoder_2=self.txt2img_pipe.text_encoder_2,
+        #     tokenizer=self.txt2img_pipe.tokenizer,
+        #     tokenizer_2=self.txt2img_pipe.tokenizer_2,
+        #     unet=self.txt2img_pipe.unet,
+        #     scheduler=self.txt2img_pipe.scheduler,
+        # )
+        # self.img2img_pipe.to("cuda")
 
-        print("Loading SDXL inpaint pipeline...")
-        self.inpaint_pipe = StableDiffusionXLInpaintPipeline(
-            vae=self.txt2img_pipe.vae,
-            text_encoder=self.txt2img_pipe.text_encoder,
-            text_encoder_2=self.txt2img_pipe.text_encoder_2,
-            tokenizer=self.txt2img_pipe.tokenizer,
-            tokenizer_2=self.txt2img_pipe.tokenizer_2,
-            unet=self.txt2img_pipe.unet,
-            scheduler=self.txt2img_pipe.scheduler,
-        )
-        self.inpaint_pipe.to("cuda")
+        # print("Loading SDXL inpaint pipeline...")
+        # self.inpaint_pipe = StableDiffusionXLInpaintPipeline(
+        #     vae=self.txt2img_pipe.vae,
+        #     text_encoder=self.txt2img_pipe.text_encoder,
+        #     text_encoder_2=self.txt2img_pipe.text_encoder_2,
+        #     tokenizer=self.txt2img_pipe.tokenizer,
+        #     tokenizer_2=self.txt2img_pipe.tokenizer_2,
+        #     unet=self.txt2img_pipe.unet,
+        #     scheduler=self.txt2img_pipe.scheduler,
+        # )
+        # self.inpaint_pipe.to("cuda")
 
         print("Loading SDXL refiner pipeline...")
         # FIXME(ja): should the vae/text_encoder_2 be loaded from SDXL always?
@@ -226,6 +225,7 @@ class Predictor(BasePredictor):
             variant="fp16",
         )
         self.refiner.to("cuda")
+        
         print("setup took: ", time.time() - start)
         # self.txt2img_pipe.__class__.encode_prompt = new_encode_prompt
 

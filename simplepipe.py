@@ -11,7 +11,7 @@ pipe = DiffusionPipeline.from_pretrained(
         variant="fp16",
 ).to("cuda")
 
-with safe_open("training_out/unet.safetensors", framework="pt", device="cuda") as f:
+with safe_open("training_out/lora.safetensors", framework="pt", device="cuda") as f:
     for key in f.keys():
        tensors[key] = f.get_tensor(key)
 

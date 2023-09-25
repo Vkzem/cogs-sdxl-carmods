@@ -69,7 +69,7 @@ def download_weights(url, dest):
 class Predictor(BasePredictor):
     def load_trained_weights(self, weights, pipe):
         print("Entering LOAD TRAINED WEIGHTS")
-        local_weights_cache = "./trained-model"
+        local_weights_cache = "./training_out"
         if not os.path.exists(local_weights_cache):
             # pget -x doesn't like replicate.delivery
             weights = str(weights)
@@ -183,7 +183,7 @@ class Predictor(BasePredictor):
             variant="fp16",
         )
         self.is_lora = False
-        if weights or os.path.exists("./trained-model"):
+        if weights or os.path.exists("./training_out"):
             self.load_trained_weights(weights, self.txt2img_pipe)
 
         self.txt2img_pipe.to("cuda")

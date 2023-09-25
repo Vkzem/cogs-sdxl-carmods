@@ -103,64 +103,65 @@ class Predictor(BasePredictor):
         else:
             print("Loading Unet LoRA")
 
-            unet = pipe.unet
+            print('loading lora.st via with loop')
 
-            print('loading lora.st')
-            tensors = load_file(os.path.join("training_out/lora.safetensors"))
-
+            with safe_open("training_out/lora.safetensors", framework="pt", device="cuda") as f:
+                for key in f.keys():
+                    tensors[key] = f.get_tensor(key)
+            
+            print('done - load state dict tensors')
+            pipe.unet.load_state_dict(tensors, strict=False) # should take < 2 seconds
 
             print('done - setting unet to pipe.unet')
-            unet = pipe.unet
-            unet_lora_attn_procs = {}
-            name_rank_map = {}
 
-            print('done - looping through tensors to do random stuff')
+            # unet = pipe.unet
+            # unet_lora_attn_procs = {}
+            # name_rank_map = {}
 
-            print('printing unit')
+            print('done - setting state dict')
+            pipe.unet.load_state_dict(tensors, strict=False) # should take < 2 seconds
 
-            print(unet)
+            # for tk, tv in tensors.items():
+            #     # up is N, d
+            #     if tk.endswith("up.weight"):
+            #         proc_name = ".".join(tk.split(".")[:-3])
+            #         r = tv.shape[1]
+            #         name_rank_map[proc_name] = r
 
-            for tk, tv in tensors.items():
-                # up is N, d
-                if tk.endswith("up.weight"):
-                    proc_name = ".".join(tk.split(".")[:-3])
-                    r = tv.shape[1]
-                    name_rank_map[proc_name] = r
+            # for name, attn_processor in unet.attn_processors.items():
+            #     cross_attention_dim = (
+            #         None
+            #         if name.endswith("attn1.processor")
+            #         else unet.config.cross_attention_dim
+            #     )
+            #     if name.startswith("mid_block"):
+            #         hidden_size = unet.config.block_out_channels[-1]
+            #     elif name.startswith("up_blocks"):
+            #         block_id = int(name[len("up_blocks.")])
+            #         hidden_size = list(reversed(unet.config.block_out_channels))[
+            #             block_id
+            #         ]
+            #     elif name.startswith("down_blocks"):
+            #         block_id = int(name[len("down_blocks.")])
+            #         hidden_size = unet.config.block_out_channels[block_id]
 
-            for name, attn_processor in unet.attn_processors.items():
-                cross_attention_dim = (
-                    None
-                    if name.endswith("attn1.processor")
-                    else unet.config.cross_attention_dim
-                )
-                if name.startswith("mid_block"):
-                    hidden_size = unet.config.block_out_channels[-1]
-                elif name.startswith("up_blocks"):
-                    block_id = int(name[len("up_blocks.")])
-                    hidden_size = list(reversed(unet.config.block_out_channels))[
-                        block_id
-                    ]
-                elif name.startswith("down_blocks"):
-                    block_id = int(name[len("down_blocks.")])
-                    hidden_size = unet.config.block_out_channels[block_id]
+            #     module = LoRAAttnProcessor2_0(
+            #         hidden_size=hidden_size,
+            #         cross_attention_dim=cross_attention_dim,
+            #         rank=name_rank_map[name],
+            #     )
+            #     unet_lora_attn_procs[name] = module.to("cuda")
 
-                module = LoRAAttnProcessor2_0(
-                    hidden_size=hidden_size,
-                    cross_attention_dim=cross_attention_dim,
-                    rank=name_rank_map[name],
-                )
-                unet_lora_attn_procs[name] = module.to("cuda")
-
-            unet.set_attn_processor(unet_lora_attn_procs)
-            unet.load_state_dict(tensors, strict=False)
+            # unet.set_attn_processor(unet_lora_attn_procs)
+            # unet.load_state_dict(tensors, strict=False)
 
         # load text
+        print('handler stuff')
         handler = TokenEmbeddingsHandler(
             [pipe.text_encoder, pipe.text_encoder_2], [pipe.tokenizer, pipe.tokenizer_2]
         )
         handler.load_embeddings(os.path.join(local_weights_cache, "embeddings.pti"))
         handler.load_embeddings("training_out/embeddings.pti") #additional training embeddings
-
 
         # load params
         with open(os.path.join("training_out/special_params.json"), "r") as f:

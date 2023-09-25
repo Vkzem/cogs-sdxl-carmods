@@ -13,9 +13,9 @@ ft*
 *.ipynb
 dataset
 training_data
-training_out
+# training_out
 output*
-training_out*
+# training_out*
 trained_model.tar
 checkpoint*
 weights

@@ -105,11 +105,21 @@ class Predictor(BasePredictor):
 
             unet = pipe.unet
 
+            print('loading lora.st')
             tensors = load_file(os.path.join("training_out/lora.safetensors"))
 
+
+            print('done - setting unet to pipe.unet')
             unet = pipe.unet
             unet_lora_attn_procs = {}
             name_rank_map = {}
+
+            print('done - looping through tensors to do random stuff')
+
+            print('printing unit')
+
+            print(unet)
+
             for tk, tv in tensors.items():
                 # up is N, d
                 if tk.endswith("up.weight"):

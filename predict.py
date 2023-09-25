@@ -83,7 +83,7 @@ class Predictor(BasePredictor):
 
         maybe_unet_path = os.path.join(local_weights_cache, "unet.safetensors")
 
-
+        print('\n\n\nWTF IS GOING ON @@@@\n\n\n')
         # if not os.path.exists(maybe_unet_path):
         if 1:
             print("Does not have Unet. assume we are using LoRA")

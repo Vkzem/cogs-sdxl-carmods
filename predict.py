@@ -82,7 +82,10 @@ class Predictor(BasePredictor):
         self.is_lora = False
 
         maybe_unet_path = os.path.join(local_weights_cache, "unet.safetensors")
-        if not os.path.exists(maybe_unet_path):
+
+
+        # if not os.path.exists(maybe_unet_path):
+        if 1:
             print("Does not have Unet. assume we are using LoRA")
             self.is_lora = True
 

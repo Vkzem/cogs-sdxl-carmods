@@ -161,7 +161,7 @@ class Predictor(BasePredictor):
     def setup(self, weights: Optional[Path] = None):
         """Load the model into memory to make running multiple predictions efficient"""
         start = time.time()
-        self.tuned_model = True
+        self.tuned_model = False
 
         print("Loading safety checker...")
         if not os.path.exists(SAFETY_CACHE):

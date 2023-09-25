@@ -152,7 +152,7 @@ class Predictor(BasePredictor):
 
 
         # load params
-        with open(os.path.join(local_weights_cache, "special_params.json"), "r") as f:
+        with open(os.path.join("training_out/special_params.json"), "r") as f:
             params = json.load(f)
         self.token_map = params
 
@@ -187,35 +187,7 @@ class Predictor(BasePredictor):
 
         self.txt2img_pipe.to("cuda")
 
-        # print("Loading SDXL img2img pipeline...")
-        # self.img2img_pipe = StableDiffusionXLImg2ImgPipeline(
-        #     vae=self.txt2img_pipe.vae,
-        #     text_encoder=self.txt2img_pipe.text_encoder,
-        #     text_encoder_2=self.txt2img_pipe.text_encoder_2,
-        #     tokenizer=self.txt2img_pipe.tokenizer,
-        #     tokenizer_2=self.txt2img_pipe.tokenizer_2,
-        #     unet=self.txt2img_pipe.unet,
-        #     scheduler=self.txt2img_pipe.scheduler,
-        # )
-        # self.img2img_pipe.to("cuda")
-
-        # print("Loading SDXL inpaint pipeline...")
-        # self.inpaint_pipe = StableDiffusionXLInpaintPipeline(
-        #     vae=self.txt2img_pipe.vae,
-        #     text_encoder=self.txt2img_pipe.text_encoder,
-        #     text_encoder_2=self.txt2img_pipe.text_encoder_2,
-        #     tokenizer=self.txt2img_pipe.tokenizer,
-        #     tokenizer_2=self.txt2img_pipe.tokenizer_2,
-        #     unet=self.txt2img_pipe.unet,
-        #     scheduler=self.txt2img_pipe.scheduler,
-        # )
-        # self.inpaint_pipe.to("cuda")
-
         print("Loading SDXL refiner pipeline...")
-        # FIXME(ja): should the vae/text_encoder_2 be loaded from SDXL always?
-        #            - in the case of fine-tuned SDXL should we still?
-        # FIXME(ja): if the answer to above is use VAE/Text_Encoder_2 from fine-tune
-        #            what does this imply about lora + refiner? does the refiner need to know about
 
         if not os.path.exists(REFINER_MODEL_CACHE):
             download_weights(REFINER_URL, REFINER_MODEL_CACHE)

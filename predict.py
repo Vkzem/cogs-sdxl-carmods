@@ -101,7 +101,7 @@ class Predictor(BasePredictor):
 
             unet = pipe.unet
 
-            tensors = load_file(os.path.join(local_weights_cache, "lora.safetensors"))
+            tensors = load_file(os.path.join("training_out/lora.safetensors"))
 
             unet = pipe.unet
             unet_lora_attn_procs = {}
@@ -145,6 +145,8 @@ class Predictor(BasePredictor):
             [pipe.text_encoder, pipe.text_encoder_2], [pipe.tokenizer, pipe.tokenizer_2]
         )
         handler.load_embeddings(os.path.join(local_weights_cache, "embeddings.pti"))
+        handler.load_embeddings("training_out/embeddings.pti") #additional training embeddings
+
 
         # load params
         with open(os.path.join(local_weights_cache, "special_params.json"), "r") as f:

@@ -68,6 +68,7 @@ def download_weights(url, dest):
 
 class Predictor(BasePredictor):
     def load_trained_weights(self, weights, pipe):
+        print("Entering LOAD TRAINED WEIGHTS")
         local_weights_cache = "./trained-model"
         if not os.path.exists(local_weights_cache):
             # pget -x doesn't like replicate.delivery
